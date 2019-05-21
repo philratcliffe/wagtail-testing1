@@ -24,6 +24,7 @@ class BlogIndexPage(Page):
         context['blogpages'] = blogpages
         return context
 
+
 class BlogPage(Page):
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
@@ -38,4 +39,18 @@ class BlogPage(Page):
         FieldPanel('date'),
         FieldPanel('intro'),
         FieldPanel('body', classname="full"),
+        InlinePanel('gallery_images', label="Gallery images"),
+    ]
+
+class BlogPageGalleryImage(Orderable):
+    page = ParentalKey(BlogPage, on_delete=models.CASCADE,
+                       related_name='gallery_images')
+    image = models.ForeignKey(
+        'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
+    )
+    caption = models.CharField(blank=True, max_length=250)
+
+    panels = [
+        ImageChooserPanel('image'),
+        FieldPanel('caption'),
     ]
